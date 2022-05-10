@@ -1,134 +1,130 @@
-import axios from "axios";
+import React from "react";
+import "./App.css";
 
-export default function WeatherApp() {
-  function formatDate(date) {
-    let hours = date.getHours();
-    if (hours < 10) {
-      hours = `0${hours}`;
-    }
-    let minutes = date.getMinutes();
-    if (minutes < 10) {
-      minutes = `0${minutes}`;
-    }
+export default function Weather() {
+  return (
+    <div className="Weather">
+      <div className="container">
+        <form className="search-form">
+          <div className="row">
+            <div className="col-9">
+              <input
+                type="search"
+                placeholder="Type a city.."
+                className="form-control shadow-sm"
+              />
+              <span>
+                <input type="submit" value="🔍" className="searchbutton" />
+                <input type="submit" value="📍" className="button" />
+              </span>
+            </div>
+          </div>
+        </form>
 
-    let dayIndex = date.getDay();
-    let days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    let day = days[dayIndex];
+        <h1>Paris</h1>
 
-    return `${day} ${hours}:${minutes}`;
-  }
-  function formatDay(timestamp) {
-    let date = new Date(timestamp * 1000);
-    let day = date.getDay();
-    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        <div className="units">
+          <h3>15°C</h3>
+        </div>
+        <div className="weather-icon">
+          <img
+            src="https://ssl.gstatic.com/onebox/weather/48/partly_cloudy.png"
+            alt="Clear"
+          />
+        </div>
+        <ul>
+          <li>Cloudy</li>
+          <li>Friday</li>
+        </ul>
+        <br />
+        <br />
 
-    return days[day];
-  }
-  function displayForecast(response) {
-    let forecast = response.data.daily;
-    let forecastElement = document.querySelector("#forecast");
+        <h5>
+          <div className="description"></div>
+        </h5>
+        <ul>
+          <li>
+            Humidity: <span>30</span>%{" "}
+          </li>
+          <li>
+            Windspeed: <span>70</span>km/h
+          </li>
+        </ul>
+        <br />
+        <br />
+        <div class="row">
+          <div class="col-sm-2">
+            <div class="forecast-day">Sat</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/rain.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">23</div>
+          </div>
 
-    let forecastHTML = `<div class="row">`;
-    forecast.forEach(function(forecastDay, index) {
-      if (index < 6) {
-        forecastHTML =
-          forecastHTML +
-          `
-      <div class="col-2">
-        <div class="weather-forecast-date">${formatDay(forecastDay.dt)}</div>
-        <img
-          src="http://openweathermap.org/img/wn/${
-            forecastDay.weather[0].icon
-          }@2x.png"
-          alt=""
-          width="42"
-        />
-        <div class="weather-forecast-temperatures">
-          <span class="weather-forecast-temperature-max"> ${Math.round(
-            forecastDay.temp.max
-          )}º </span>
-          <span class="weather-forecast-temperature-min"> ${Math.round(
-            forecastDay.temp.min
-          )}° </span>
+          <div class="col-sm-2">
+            <div class="forecast-day">Sun</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/partly_cloudy.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">19</div>
+          </div>
+          <div class="col-sm-2">
+            <div class="forecast-day">Mon</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/partly_cloudy.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">22</div>
+          </div>
+          <div class="col-sm-2">
+            <div class="forecast-day">Tue</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/sunny.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">33</div>
+          </div>
+          <div class="col-sm-2">
+            <div class="forecast-day">Wed</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/windy.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">26</div>
+          </div>
+          <div class="col-sm-2">
+            <div class="forecast-day">Thru</div>
+            <div class="forecast-icon">
+              <img
+                src="https://ssl.gstatic.com/onebox/weather/48/sunny.png"
+                alt="Clear"
+              />
+            </div>
+            <div class="forecast-temp">17</div>
+          </div>
         </div>
       </div>
-  `;
-      }
-    });
-    forecastHTML = forecastHTML + `</div>`;
-    forecastElement.innerHTML = forecastHTML;
-  }
-  function getForecast(coordinates) {
-    let apiKey = "d11b78f27e906e9e69feeb79fd23a0d6";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
-
-    axios.get(apiUrl).then(displayForecast);
-  }
-  function showTemperature(response) {
-    document.querySelector("#city").innerHTML = response.data.name;
-    let celsiusTemperature = response.data.main.temp;
-    document.querySelector("#temperature").innerHTML = Math.round(
-      celsiusTemperature
-    );
-
-    document.querySelector("#humidity").innerHTML = response.data.main.humidity;
-    document.querySelector("#wind").innerHTML = Math.round(
-      response.data.wind.speed
-    );
-    document.querySelector("#description").innerHTML =
-      response.data.weather[0].main;
-    let iconElement = document.querySelector("#icon");
-    iconElement.setAttribute(
-      "src",
-      `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
-    );
-    iconElement.setAttribute("alt", response.data.weather[0].description);
-    getForecast(response.data.coord);
-  }
-
-  function searchCity(city) {
-    let apiKey = "d11b78f27e906e9e69feeb79fd23a0d6";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    axios.get(apiUrl).then(showTemperature);
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    let city = document.querySelector("#city-input").value;
-    searchCity(city);
-  }
-
-  function searchLocation(position) {
-    let apiKey = "d11b78f27e906e9e69feeb79fd23a0d6";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${apiKey}&units=metric`;
-
-    axios.get(apiUrl).then(showTemperature);
-  }
-
-  function getCurrentLocation(event) {
-    event.preventDefault();
-    navigator.geolocation.getCurrentPosition(searchLocation);
-  }
-
-  let dateElement = document.querySelector("#date");
-  let currentTime = new Date();
-  dateElement.innerHTML = formatDate(currentTime);
-
-  let searchForm = document.querySelector("#search-form");
-  searchForm.addEventListener("submit", handleSubmit);
-
-  let currentLocationButton = document.querySelector(
-    "#current-location-button"
+      <div>
+        <h6>
+          <a href="https://github.com/chwema/chichi-weather-app">
+            {" "}
+            Open-source code
+          </a>{" "}
+          by Chido Chimbetete
+        </h6>
+      </div>
+    </div>
   );
-  currentLocationButton.addEventListener("click", getCurrentLocation);
-
-  searchCity("New York");
 }
